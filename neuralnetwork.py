@@ -21,7 +21,29 @@ class NeuralNetwork:
 
         pass
 
-    def train(self):
+    def train(self, inputs_list, targets_list):
+        # convert input list to 2D array
+        inputs = numpy.array(inputs_list, ndmin=2).T
+
+        # calc signals into the hidden layer
+        hidden_inputs = numpy.dot(self.w_input_hidden, inputs)
+        # calc the signals coming from the hidden layer
+        hidden_outputs = self.sigmoid(hidden_inputs)
+
+        # calc signals into the output layer
+        final_inputs = numpy.dot(self.w_hidden_output, hidden_outputs)
+        final_outputs = self.sigmoid(final_inputs)
+
+        targets = numpy.array(targets_list, ndim=2).T
+        # calc the errors
+        output_errors = targets - final_outputs
+        hidden_errors = numpy.dot(self.w_hidden_output.T, output_errors)
+
+        self.w_hidden_output += self.lr * numpy.dot((output_errors * final_outputs * (1 - final_outputs)),
+                                                    numpy.transpose(hidden_outputs))
+        self.w_hidden_output += self.lr * numpy.dot((hidden_errors * hidden_outputs * (1 - hidden_outputs)),
+                                                    numpy.transpose(inputs_list))
+
         pass
 
     def querry(self, inputs_list):
